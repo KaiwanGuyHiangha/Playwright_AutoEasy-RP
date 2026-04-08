@@ -1,0 +1,38 @@
+name: Isuzu AutoEasy Automation
+on:
+  push:
+    branches: [ main, master ]  # รันเมื่อมีการ push โค้ด
+  schedule:
+    - cron: '0 1 * * *'        # (แถม) ตั้งให้รันอัตโนมัติทุกวัน ตอนตี 1
+  workflow_dispatch:           # ช่วยให้เรากดสั่งรันเองได้จากหน้าเว็บ GitHub
+
+jobs:
+  run-automation:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+          playwright install chromium --with-deps
+
+      - name: Run Playwright Script
+        env:
+          # ดึงความลับจาก GitHub Secrets มาใส่ในเครื่อง CI
+          ISUZU_USER: ${{ secrets.ISUZU_USER }}
+          ISUZU_PASS: ${{ secrets.ISUZU_PASS }}
+        run: python test_Login_AutoEasy-RP.py
+
+      - name: Upload Screenshot Artifacts
+        if: failure()  # ให้ส่งรูปออกมาเฉพาะตอนที่เทสพังเท่านั้น
+        uses: actions/upload-artifact@v4
+        with:
+          name: error-screenshots
+          path: screenshots/
