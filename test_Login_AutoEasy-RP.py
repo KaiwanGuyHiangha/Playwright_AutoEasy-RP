@@ -8,7 +8,7 @@ from playwright.sync_api import Playwright, sync_playwright
 load_dotenv()
 USER_ID = os.getenv("ISUZU_USER")
 PASSWORD = os.getenv("ISUZU_PASS")
-BASE_URL = "https://autoeasy.isuzu-dealers.com:2443/AutoEasy.Web/Account/Login"
+BASE_URL = "http://172.30.90.124/AutoEasy.Web/Account/Login"
 
 def run(playwright: Playwright) -> None:
     # --- TURBO SETTING: ไม่ใช้ slow_mo และเปิดโหมด Headless ---
